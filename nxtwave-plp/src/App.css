@@ -1,0 +1,30 @@
+/* src/App.css or src/components/ProductList.css */
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  
+  .product {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 10px;
+    width: 200px;
+    text-align: center;
+  }
+  
+  .product img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .product h3 {
+    font-size: 18px;
+    margin-top: 10px;
+  }
+  
+  .product p {
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  
