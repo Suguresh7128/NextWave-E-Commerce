@@ -1,7 +1,10 @@
-import { GetServerSideProps } from 'next';
+import { useEffect, useState } from "react";
+import { GetServerSideProps } from "next";
 import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { auth } from "../lib/firebase"; // Make sure path is correct
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 // Define the Product type
 type Product = {
@@ -32,23 +35,48 @@ export const getServerSideProps: GetServerSideProps = async () => {
   };
 };
 
-// Main Home component
 const Home = ({ products }: { products: Product[] }) => {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null); // Optional: force re-render
+    } catch (error) {
+      console.error("Logout Error:", error);
+    }
+  };
+
   return (
     <div
       className={`${geistSans.className} ${geistMono.className} grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20`}
     >
-      {/* Header with login/signup */}
+      {/* Header */}
       <header className="w-full flex justify-end gap-4">
-        <Link href="/login" className="text-blue-600 underline">
-          Login
-        </Link>
-        <Link href="/signup" className="text-blue-600 underline">
-          Sign Up
-        </Link>
+        {user ? (
+          <button onClick={handleLogout} className="text-red-600 underline">
+            Logout
+          </button>
+        ) : (
+          <>
+            <Link href="/login" className="text-blue-600 underline">
+              Login
+            </Link>
+            <Link href="/signup" className="text-blue-600 underline">
+              Sign Up
+            </Link>
+          </>
+        )}
       </header>
 
-      {/* Main product listing */}
+      {/* Main */}
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <h1 className="text-4xl font-semibold">Product Listing</h1>
 
